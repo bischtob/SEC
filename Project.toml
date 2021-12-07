@@ -1,4 +1,7 @@
 name = "SEC"
 uuid = "54a427c6-c52c-424a-a01a-bca5b451f91b"
-authors = ["bischtob" <tobias.bischoff@pm.me>, "sandreza <andrenogueirasouza@gmail.com>"]
+authors = ["bischtob <tobias.bischoff@pm.me>", "sandreza <andrenogueirasouza@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+Optim = "429524aa-4258-5aef-a3af-852621145aeb"
