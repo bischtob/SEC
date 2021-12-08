@@ -1,5 +1,6 @@
 module Sample
+using Distributions, Random
 
-greet() = println("Hello World!")
+include("mcmc.jl")
 
 end # module
