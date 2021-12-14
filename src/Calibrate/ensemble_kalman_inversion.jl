@@ -9,9 +9,9 @@ end
 using Random, LinearAlgebra, Distributions
 Random.seed!(1234)
 # input Space 
-Mo = 1000
+Mo = 3
 # output space
-M = 10
+M = 3
 
 A = randn(M,Mo) 
 N = 1 # number of timesteps
@@ -20,7 +20,8 @@ H = A
 x = randn(Mo) .- 10 # solution
 y̅ = H * x
 
-# J = 10 * Mo # 10x the input space # J * N is the number of times the forward map is evaluated
+# J = 10 * Mo # 10x the input space 
+# J * N is the number of times the forward map is evaluated
 J = 100
 
 ⊗(a,b) = a * b'
