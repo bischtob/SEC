@@ -4,7 +4,7 @@ using Distributions, Random, LinearAlgebra
 import Distributions: rand
 import Distributions: mean, cov
 
-include("emulator.jl")
+include("gaussian_processes.jl")
 
 greet() = println("Hello World!")
 
