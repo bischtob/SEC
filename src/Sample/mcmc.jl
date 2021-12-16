@@ -1,3 +1,5 @@
+using Distributions
+import Distributions: Uniform
 """
 acceptance criteria for Metropolis-Hastings
 # Definition 
@@ -51,14 +53,12 @@ markov_chain(nll, proposal, seed_X, chain_length; random_seed = 1234)
 - `seed_X`: (Array), initial parameter values
 - `chain_length`: (Int) number of markov chain monte carlo steps
 - `perturb`: a function that performs a perturbation of X
-# Keyword Arguments
-- `random_seed`: determines the seed of the random number generator
+
 # Return
 - `chain_X`: The matrix of accepted parameters in the random walk
 - `chain_nll`: The array of errors associated with each step in param chain
 """
-function markov_chain(nll, proposal, seed_X, chain_length::Int; random_seed = 1234)
-    Random.seed!(random_seed)
+function markov_chain(nll, proposal, seed_X, chain_length::Int)
 
     current_X = seed_X
     current_nll = nll(seed_X)

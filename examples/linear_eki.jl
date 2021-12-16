@@ -76,9 +76,9 @@ for i in 1:N
     r = y - G
 
     # update
-    Cpp_inv = cholesky(Symmetric(Cᵖᵖ + 1/h * Γ))
+    Cᵖᵖ_factorized = cholesky(Symmetric(Cᵖᵖ + 1/h * Γ))
     for j in 1:J
-        u[j] += Cᵘᵖ * ( Cpp_inv \ r[j] )
+        u[j] += Cᵘᵖ * ( Cᵖᵖ_factorized \ r[j] )
     end
     push!(timeseries, copy(u))
 end

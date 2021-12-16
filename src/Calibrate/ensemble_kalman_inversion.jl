@@ -7,21 +7,7 @@ using Distributions, Random, LinearAlgebra
     Δt::D
     J::E
 end
-# include random_seed as a part of eki
-# Σ is not used. It is the regularization covariance
 
-# EKI() = EKI([nothing for i in fieldnames(EKI)]...)
-
-#=
-using GLMakie
-fig, ax, sc = scatter([(u[i][1], u[i][2]) for i in eachindex(u)], color = :red)
-
-scatter!(ax, [(u₀[i][1], u₀[i][2]) for i in eachindex(u)], color = :blue)
-scatter!(ax, [(exact[1], exact[2])], marker = '⋆', color = :yellow, markersize = 30)
-display(fig)
-=#
-
-##
 ⊗(a,b) = a * b'
 
 """
@@ -73,18 +59,14 @@ function eki_step!(u, forward_map, data, J, ξ, Γ, Δt)
     return nothing
 end
 
-function eki_loop!(u, forward_map, y̅, J, Γ, Δt, N; random_seed = 1234)
-    Random.seed!(random_seed)
+function eki_loop!(u, forward_map, y̅, J, Γ, Δt, N)
     ξ = MvNormal(1/Δt * Γ)
     for n in 1:N
         eki_step!(u, forward_map, y̅, J, ξ, Γ, Δt)
-    end
-    for callback in callbacks 
-        callback(u)
     end
 end
 
 function calibrate!(x, G, y, method::EKI)
     (; J, Γ, Δt, N) = method
-    eki_loop!(G, x, y, J, Γ, Δt, N; random_seed = 1234)
+    eki_loop!(G, x, y, J, Γ, Δt, N)
 end

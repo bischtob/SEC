@@ -2,6 +2,7 @@ using SEC, Test, Statistics, Distributions, Random
 import SEC.Sample: markov_link, markov_chain
 
 @testset "markov link correctness" begin
+    Random.seed!(1234)
     nll(X) = 10
     proposal(X) = 2
     current_X = 1
@@ -23,10 +24,12 @@ end
     proposal(X) = X + randn()
     seed_X = 0.0
     chain_length = 10000
-    (; chain_X, chain_nll) = markov_chain(nll, proposal, seed_X, chain_length, random_seed = 1234)
+    Random.seed!(1234)
+    (; chain_X, chain_nll) = markov_chain(nll, proposal, seed_X, chain_length)
     original_chain_X = copy(chain_X)
     original_chain_nll = copy(chain_nll)
-    (; chain_X, chain_nll) = markov_chain(nll, proposal, seed_X, chain_length, random_seed = 1234)
+    Random.seed!(1234)
+    (; chain_X, chain_nll) = markov_chain(nll, proposal, seed_X, chain_length)
     @test all((original_chain_X - chain_X) .== 0.0)
     @test all((original_chain_nll - chain_nll) .== 0.0)
     # hand unrolling loop
@@ -42,16 +45,13 @@ end
 end
 
 @testset "markov chain convergence" begin
+    Random.seed!(1234)
     nll(X) = X^2 / 2
     proposal(X) = X + randn()
     seed_X = 0.15
     chain_length = 10000
-    (; chain_X, chain_nll) = markov_chain(nll, proposal, seed_X, chain_length, random_seed = 1234)
+    (; chain_X, chain_nll) = markov_chain(nll, proposal, seed_X, chain_length)
     @test abs(mean(chain_X)) < 1 / sqrt(chain_length)
-    @test abs(std(chain_X) - 1.0) < +1 / sqrt(chain_length)
+    @test abs(std(chain_X) - 1.0) < 1 / sqrt(chain_length)
 end
-
-
-
-
   
