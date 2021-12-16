@@ -1,5 +1,4 @@
 module Sample
-using Distributions, Random
 
 include("mcmc.jl")
 

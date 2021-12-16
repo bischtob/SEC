@@ -1,5 +1,5 @@
 module Emulate
-using Distributions, 
+using Distributions
 using Random
 using LinearAlgebra
 using Flux

@@ -29,7 +29,7 @@ function cov(gp::GaussianProcess, X)
 end
 
 """
-condition(gp::GaussianProcess, data; σₙ = 0.0)
+condition(gp::GaussianProcess, data; noise = 0.0)
 
 Keyword Arguments
 noise: scalar, observational noise
@@ -37,7 +37,7 @@ noise: scalar, observational noise
 function condition(gp::GaussianProcess, data; noise = 0.0)
     (; X, Y) = data
 
-    K = cov(gp, X) + noise*I
+    K = cov(gp, X) + noise * I
     μX = mean(gp, X)
     predictor = K \ (Y - μX)
 
