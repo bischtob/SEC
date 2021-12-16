@@ -1,4 +1,4 @@
-using SEC, Test, Statistics, Distributions
+using SEC, Test, Statistics, Distributions, Random
 import SEC.Sample: markov_link, markov_chain
 
 @testset "markov link correctness" begin
