@@ -104,8 +104,7 @@ display(fig)
 
 
 ##
-
-function eki_function!(u, N, forward_map, forward_map, J, y̅, ξ, Γ)
+function eki_function!(u, N, forward_map, J, y̅, ξ, Γ)
     for i in 1:N
         u̅ = mean(u)
         G = forward_map.(u) # error handling needs to go here

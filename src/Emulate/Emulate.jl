@@ -1,5 +1,16 @@
 module Emulate
-using Distributions, Random, LinearAlgebra
+using Distributions, 
+using Random
+using LinearAlgebra
+using Flux
+using FFTW
+using Zygote
+
+using Tullio
+using CUDA
+using CUDAKernels
+using KernelAbstractions
+using ChainRulesCore
 
 import Distributions: rand
 import Distributions: mean, cov

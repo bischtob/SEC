@@ -31,7 +31,7 @@ end
 function condition(gp::GaussianProcess, data)
     (; X, Y) = data
 
-    K = cov(gp, X)
+    K = cov(gp, X) 
     predictor = K \ Y
 
     function cond_mean(x)
