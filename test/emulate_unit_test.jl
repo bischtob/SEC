@@ -9,7 +9,7 @@ import SEC.Emulate: mean, cov, GaussianProcess, condition
     @test k === cov(gp)
 end
 
-@testset "1D GPR mean and cov data test" begin
+@testset "1D GPR mean and cov test" begin
     μ(x) = 0.0
     k(x,y) = exp(-(x-y)^2/2)
     gp = GaussianProcess(mean = μ, covariance = k)
@@ -22,7 +22,7 @@ end
     @test σX[1, N] ≈ k(1, N)
 end
 
-@testset "1D GPR mean and cov data test" begin
+@testset "1D GPR conditional mean and cov test" begin
     μ(x) = 0.0
     k(x,y) = exp(-(x-y)^2/2)
     gp = GaussianProcess(mean = μ, covariance = k)
@@ -37,4 +37,3 @@ end
     covXX =  [cgp.covariance(x,x) for x in X]
     @test all(abs.(covXX) .≤ tolerance)
 end
-
