@@ -28,15 +28,22 @@ function cov(gp::GaussianProcess, X)
     return [gp.covariance(X[i], X[j]) for i in eachindex(X), j in eachindex(X)]
 end
 
-function condition(gp::GaussianProcess, data)
+"""
+condition(gp::GaussianProcess, data; σₙ = 0.0)
+
+Keyword Arguments
+noise: scalar, observational noise
+"""
+function condition(gp::GaussianProcess, data; noise = 0.0)
     (; X, Y) = data
 
-    K = cov(gp, X)
-    predictor = K \ Y
+    K = cov(gp, X) + noise*I
+    μX = mean(gp, X)
+    predictor = K \ (Y - μX)
 
     function cond_mean(x)
         cX = [gp.covariance(x, dx) for dx in X]
-        return gp.mean(x) + predictor' * (cX .- gp.mean(x))
+        return gp.mean(x) + predictor' * cX
     end
 
     function cond_cov(x,y)
