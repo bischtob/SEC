@@ -64,7 +64,7 @@ push!(timeseries, copy(u))
 # Alternatively we can view the posterior as  
 # posterior ∝ exp(-dot(y - H * x, Γ⁻¹ * (y - H * x)) - x' Σ⁻¹ x)
 # which implies μ = (H' Γ⁻¹ H + Σ⁻¹)⁻¹ H' Γ⁻¹ y
-# and           σ = H' Γ⁻¹ H + Σ⁻¹
+# and           σ = (H' Γ⁻¹ H + Σ⁻¹)⁻¹
 
 # EKI Algorithm
 for i = 1:N
