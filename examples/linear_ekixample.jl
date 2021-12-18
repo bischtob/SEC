@@ -44,10 +44,10 @@ J = 4000 * Mo
 
 # Construct Posterior
 HΓHΣ = Symmetric((H' * (cholesky(Γ) \ H) + cholesky(Σ) \ I))
-cHΓH = cholesky(HΓH) # LU fails
+cHΓHΣ = cholesky(HΓHΣ) # LU fails
 rhs = (H' * (cholesky(Γ) \ y̅[:]))
-posterior_μ = cHΓH \ rhs
-posterior_Σ = cHΓH \ I
+posterior_μ = cHΓHΣ \ rhs
+posterior_Σ = cHΓHΣ \ I
 posterior = MvNormal(posterior_μ, posterior_Σ)
 
 # Construct empirical prior
