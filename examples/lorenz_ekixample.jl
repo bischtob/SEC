@@ -16,6 +16,12 @@ function lorenz!(ṡ, s; ρ = 28, β = 8 / 3, σ = 10)
     return nothing
 end
 
+function closure_lorenz!(ρ, β, σ)
+    function rhs!(ṡ, s)
+        lorenz!(ṡ, s, ρ = ρ, β = β, σ = σ)
+    end
+end
+
 function step!(s, ṡ, s̃, rhs!, Δt)
     rhs!(ṡ, s)
     @. s̃ = s + Δt * ṡ
@@ -54,8 +60,6 @@ xlims!(ax, (-23, 23))
 
 @lift ylims!(ax, (0, 2 / sqrt(2 * π * var($x̅ₜ))))
 d1 = density!(ax, x̅ₜ, color = (:purple, 0.15), strokewidth = 1)
-# ax.xlabel =
-# hist!(ax, x̅ₜ, color = (:purple, 0.15), strokewidth = 1)
 
 time_string = @lift("Averaging Interval T = " * @sprintf("%0.3f", $i * Δt))
 fig[2, 1] = vgrid!(
@@ -64,3 +68,41 @@ fig[2, 1] = vgrid!(
 )
 
 display(fig)
+
+##
+frames = 16
+fps = 5
+record(fig, pwd() * "/lorenz_ekixample.mp4"; framerate = fps) do io
+    for ii = 1:frames
+        i[] = ii
+        sleep(1 / fps)
+        recordframe!(io)
+    end
+end
+
+## 
+function closure_forward_map(i)
+    function forward_map(C)
+        ρ, σ, β = C
+        rhs! = closure_lorenz!(ρ, β, σ)
+        timeseries = []
+        push!(timeseries, [(s...)...])
+        Δt = 0.005
+        N = 2^19 - 1
+        for i = 1:N
+            step!(s, ṡ, s̃, rhs!, Δt)
+            push!(timeseries, [(s...)...])
+        end
+    
+        x = [timeseries[i][1] for i in eachindex(timeseries)]
+        y = [timeseries[i][2] for i in eachindex(timeseries)]
+        z = [timeseries[i][3] for i in eachindex(timeseries)]
+    
+        x̅ₜ = mean(reshape(x, (2^i, 2^(19 - i))), dims = 1)[:]
+        return x̅ₜ
+    end
+end
+
+𝒢 = closure_forward_map(10)
+C = [28, 10, 8/3]
+𝒢(C)
