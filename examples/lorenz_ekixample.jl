@@ -116,7 +116,8 @@ function closure_forward_map(i)
         Nuₜ = mean(reshape(z .* β, (2^i, 2^(16 - i))), dims = 1)[:]
         z² = mean(reshape(z .* z, (2^i, 2^(16 - i))), dims = 1)[:]
         z³ = mean(reshape(z .* z .* z, (2^i, 2^(16 - i))), dims = 1)[:]
-        return [Nuₜ, z²]
+        x²z = mean(reshape(x .* x .* z, (2^i, 2^(16 - i))), dims = 1)[:]
+        return [Nuₜ, z²,]
     end
 end
 
