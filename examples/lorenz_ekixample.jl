@@ -94,7 +94,7 @@ function closure_forward_map(i)
         rhs! = closure_lorenz!(ρ, β, σ)
         Δt = 0.005
         N = 2^16 - 1
-
+    
         Random.seed!(1234)
         # Initialize arrays for timestepping
         ṡ = [[0.0] for i = 1:3]
@@ -102,32 +102,34 @@ function closure_forward_map(i)
         s̃ = copy(s)
         timeseries = []
         push!(timeseries, [(s...)...])
-
+    
         for i = 1:N
             step!(s, ṡ, s̃, rhs!, Δt)
             push!(timeseries, [(s...)...])
         end
-
+    
         x = [timeseries[i][1] for i in eachindex(timeseries)]
         y = [timeseries[i][2] for i in eachindex(timeseries)]
         z = [timeseries[i][3] for i in eachindex(timeseries)]
-
+    
         # use the Nusselt number as the observation
         Nuₜ = mean(reshape(z .* β, (2^i, 2^(16 - i))), dims = 1)[:]
-        return Nuₜ
+        z² = mean(reshape(z .* z, (2^i, 2^(16 - i))), dims = 1)[:]
+        z³ = mean(reshape(z .* z .* z, (2^i, 2^(16 - i))), dims = 1)[:]
+        return [Nuₜ, z²]
     end
 end
 
 𝒢 = closure_forward_map(12)
 C = [28, 10, 8 / 3]
 
-forward_map(C) = mean(𝒢(C))
+forward_map(C) = mean.(𝒢(C))
 
 y = 𝒢(C)
-y̅ = mean(y)
-Γ = var(y)
-J = length(C) * 10
-ξ = Normal(0, Γ)
+y̅ = mean.(y)
+Γ = Diagonal(var.(y))
+J = length(C) * 10 
+ξ = MvNormal(zeros(length(y)), Γ)
 # Guassianize
 
 prior = MvNormal([28, 10, 8 / 3], Diagonal([3.0, 3.0, 1.0]))
