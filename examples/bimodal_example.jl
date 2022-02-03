@@ -14,33 +14,39 @@ Random.seed!(1234)
 Mo = 2
 # output space
 M = 2
-H = randn(M, Mo)
-forward_map(x) = H * x
+#H = randn(M, Mo)
+H = zeros(M, M) + I
+forward_map(x) = x[1] < 0 ? H * x : -H * x
 
 # Create artificial solution
-x = randn(Mo) .- 30
+x = zeros(Mo) .- [15, 0]
 y̅ = forward_map(x)
 
 # Define an initial ensemble distribution
 MoMo = randn(Mo, Mo)
-Σ = MoMo' * MoMo + I
-prior = MvNormal(Σ)
+#Σ = 10 * (MoMo' * MoMo + I)
+μ0 = [5, 0]
+Σ = 10 * (zeros(Mo, Mo) + I)
+prior = MvNormal(μ0, Σ)
 # this choice implies prior ∝ exp( - x' Σ⁻¹ x)
 
 # Implicitly define the likelihood function via the covariance 
 MM = randn(M, M)
-Γ = (MM' * MM + I)
+#Γ = (MM' * MM + I)
+Γ = (zeros(M, M) + I)
+
 # implies likelihood  exp(- T * dot(y - H * x, Γ⁻¹ * (y - H * x)) )
 # where T is the final time of the simulation
 # Observe that
 # likelihood = exp(- dot(y - H * x, Γ⁻¹ * (y - H * x)) ) for T = 1
 
 # number of steps
-N = 100
+#N = 100
+N = 500
 # timestep size (h = 1/N implies T=1 at the final time)
 Δt = 1 / N
 # number of ensemble members
-J = 4000 * Mo
+J = 400 * Mo
 
 # Construct Posterior
 HΓHΣ = Symmetric((H' * (cholesky(Γ) \ H) + cholesky(Σ) \ I))
@@ -70,7 +76,7 @@ push!(timeseries, copy(u))
 for _ = 1:N
     # Likelihood perturbation for algorithm, (constructed from before)
     ξ = MvNormal(1 / Δt * Γ)
-    SEC.Calibrate.eki_step!(u, forward_map, y̅, J, ξ, Γ, Δt)
+    SEC.Calibrate.two_player_eki_step!(u, forward_map, y̅, J, ξ, Γ, Δt)
     push!(timeseries, copy(u))
 end
 
@@ -132,7 +138,7 @@ ax_side = Axis(fig[2, 2])
 ax_above.ylabel = "probability density"
 ax_side.xlabel = "probability density"
 
-limits!(ax, -50, 10, -8, 4)
+limits!(ax, -25, 25, -10, 10)
 xlims!(ax_above, ax.limits[][1]...)
 ylims!(ax_above, 0, 0.4)
 ylims!(ax_side, ax.limits[][2]...)
@@ -154,7 +160,7 @@ tmpy = @. 1 / sqrt(2 * π * σ) * exp(-0.5 * (tmpx - μ)^2 / σ)
 ln1 = lines!(ax_above, tmpx, tmpy, linewidth = 4, color = :red)
 σ = posterior.Σ[1, 1]
 μ = posterior.μ[1]
-tmpy = @. 1 / sqrt(2 * π * σ) * exp(-0.5 * (tmpx - μ)^2 / σ)
+tmpy = @. 1 / sqrt(2 * π * σ) * exp(-0.5 * (tmpx - μ)^2 / σ) + 1 / sqrt(2 * π * σ) * exp(-0.5 * (tmpx + μ)^2 / σ)
 lines!(ax_above, tmpx, tmpy, linewidth = 4, color = :blue)
 
 d2 = density!(ax_side, c², color = (:purple, 0.15), label = "density c²", strokewidth = 1, direction = :y)
