@@ -129,7 +129,7 @@ ti = time_slider.value
 ensemble = @lift [(timeseries[$ti][i][1], timeseries[$ti][i][2]) for i in eachindex(u)]
 sc_transition = scatter!(ax, ensemble, color = :purple)
 
-scatter!(ax, [(exact[1], exact[2])], marker = '⋆', color = :yellow, markersize = 30)
+scstar = scatter!(ax, [(exact[1], exact[2])], marker = '⋆', color = :yellow, markersize = 30)
 
 ax.xlabel = "c¹"
 ax.ylabel = "c²"
@@ -191,12 +191,12 @@ ln2 = lines!(ax_side, tmpy, tmpx, linewidth = 4, color = :blue)
 
 
 Legend(fig[1, 2],
-    [sc_init, sc_final, sc_transition, ln1, ln2],
-    ["prior ensemble", "posterior ensemble", "transition ensemble", "exact marginal prior", "exact marginal posterior"])
+    [sc_init, sc_final, sc_transition, ln1, ln2, scstar],
+    ["prior ensemble", "posterior ensemble", "transition ensemble", "exact marginal prior", "exact marginal posterior", "MAP Estimate"])
 
 update!(fig.scene)
 display(fig)
-
+##
 seconds = 5
 fps = 30
 frames = round(Int, fps * seconds)

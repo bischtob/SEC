@@ -145,6 +145,7 @@ push!(timeseries, copy(u))
 N = 4
 h = 1 / N
 ⊗(a, b) = a * b'
+tic = Base.time()
 for i = 1:N
     println("loop ", i)
     u̅ = mean(u)
@@ -176,7 +177,8 @@ for i = 1:N
     end
     push!(timeseries, copy(u))
 end
-
+toc = Base.time()
+println("The time for optimization is ", toc - tic)
 residual = C - mean(timeseries[end])
 
 println("The relative error of ρ is ", abs(residual[1]) / C[1])
